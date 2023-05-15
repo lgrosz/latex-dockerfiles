@@ -1,0 +1,36 @@
+name: tex-dockerfiles build and test
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+  # Allow for manually running
+  workflow_dispatch:
+
+  # Run at 00:52 UTC every Saturday
+  schedule:
+    - cron: '52 0 * * 6'
+
+jobs:
+  build-test-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v3
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - uses: docker/build-push-action@v4
+        with:
+          context: l3build
+          push: false
+          target: test
+
